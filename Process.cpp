@@ -26,20 +26,27 @@ void Process::setState(ProcessState st)
     state = st;
 }
 
-Process::Process(int pid,int priority,int work_time)
+int Process::get_arrival_time() const {
+    return arrival_time;
+}
+
+int Process::get_remaining_time() const {
+
+    return time_to_complete - time_execued_so_far;
+}
+
+Process::Process(int pid, int arrival_time_in, int work_time, int priority_in)
 {
     PID = pid;
-    Priority = priority;
-    state = ProcessState::NEW;
+    arrival_time = arrival_time_in;
     time_to_complete = work_time;
+    Priority = priority_in;
+    state = ProcessState::NEW;
 }
 
 void Process::wait_for_complitation()
 {
-    std::cout << "Process working  with PID" << " " << this->getPID() << std::endl;
-    if(!is_finished()) {
-        time_execued_so_far++;
-    }
+    time_execued_so_far++;
 }
 
 int Process::getTimeToComplete() const {
@@ -48,11 +55,12 @@ int Process::getTimeToComplete() const {
 
 bool Process::is_finished()
 {
-    if(time_to_complete < time_execued_so_far) {
-        return false;
-    } else {
+
+    if(time_execued_so_far >= time_to_complete) {
         state = ProcessState::COMPLETE;
-        return true;
+        return true; 
+    } else {
+        return false;
     }
 }
 
@@ -64,4 +72,3 @@ std::ostream& operator<<(std::ostream& os,const Process& process)  {
 
     return os;
 }
-
